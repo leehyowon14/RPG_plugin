@@ -40,7 +40,7 @@ public class BlockEvent implements Listener {
 	}
 
 	@EventHandler // 작동 안하는듯
-	public void onBlockExplode(BlockExplodeEvent e) { //폭발 이벹느
+	public void onBlockExplode(BlockExplodeEvent e) { // 폭발 이벤트
 		if (Main.Plugin_On) {
 			System.out.println("asdf");
 			e.setCancelled(true);
