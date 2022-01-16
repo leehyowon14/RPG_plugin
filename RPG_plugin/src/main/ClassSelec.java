@@ -40,12 +40,13 @@ public class ClassSelec implements Listener {
 						}
 					}
 					p.sendMessage("검사가 선택되었습니다.");
-					
+
 					ItemStack item = new ItemStack(Material.WOOD_SWORD);// 목검 주기
 					ItemMeta meta = item.getItemMeta();
-					
+
 					meta.setDisplayName("목검");
-					meta.setLore(Arrays.asList("평범한 목검이다.", "", "특수능력", "대쉬(우클릭)", ChatColor.WHITE + "  쿨타임:3초", ChatColor.WHITE + "  스테미나 소모량:5"));
+					meta.setLore(Arrays.asList("평범한 목검이다.", "", "특수능력", "대쉬(우클릭)", ChatColor.WHITE + "  쿨타임:3초",
+							ChatColor.WHITE + "  스테미나 소모량:5"));
 					meta.setUnbreakable(true);
 					item.setItemMeta(meta);
 
@@ -53,11 +54,11 @@ public class ClassSelec implements Listener {
 
 					Team team = board.getTeam("swordman"); // 클래스 팀 추가
 					team.addEntry(p.getName());
-					
+
 					// 스테미나 기본값으로 수정
 					board.getObjective("stamina").getScore(p.getName()).setScore(100);
 					board.getObjective("max_stamina").getScore(p.getName()).setScore(100);
-					
+
 				} else if (e.getCurrentItem().getType() == Material.BOW) { // 장거리
 					e.setCancelled(true);
 					view.close();
@@ -70,37 +71,38 @@ public class ClassSelec implements Listener {
 						return;
 					}
 					p.sendMessage("궁수가 선택되었습니다.");
-					
+
 					ItemStack item = new ItemStack(Material.BOW);// 낡은 활 주기
 					ItemMeta meta = item.getItemMeta();
-					
+
 					meta.setDisplayName("낡은 활");
-					meta.setLore(Arrays.asList("낡은 활이다.", "", "특수능력", "매직 애로우(좌클릭)", ChatColor.WHITE + "  쿨타임:0.5초", ChatColor.WHITE + "  마나 소모량:10"));
+					meta.setLore(Arrays.asList("낡은 활이다.", "", "특수능력", "매직 애로우(좌클릭)", ChatColor.WHITE + "  쿨타임:0.5초",
+							ChatColor.WHITE + "  마나 소모량:10"));
 					meta.setUnbreakable(true);
 					item.setItemMeta(meta);
 					p.getInventory().addItem(item);
 
 					item = new ItemStack(Material.ARROW);// 화살 주기
 					item.setAmount(32);
-					
+
 					p.getInventory().addItem(item);
-					
+
 					Team team = board.getTeam("Archer"); // 클래스 팀 추가
 					team.addEntry(p.getName());
-					
+
 					// 마나 기본값으로 수정
 					board.getObjective("mp").getScore(p.getName()).setScore(100);
 					board.getObjective("max_mp").getScore(p.getName()).setScore(100);
-					
+
 				}
 				ItemStack item = new ItemStack(Material.BREAD);// 빵 주기
 				ItemMeta meta = item.getItemMeta();
-				
+
 				meta.setDisplayName("딱딱한 빵");
 				meta.setLore(Arrays.asList("딱딱하게 굳은 빵이다."));
 				item.setItemMeta(meta);
 				item.setAmount(16);
-				
+
 				p.getInventory().addItem(item);
 			}
 		}
