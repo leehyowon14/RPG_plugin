@@ -1,0 +1,25 @@
+package main;
+
+import org.bukkit.event.Listener;
+
+public class PlayerEvent implements Listener {
+	@EventHandler
+	public void onThrowItem(PlayerDropItemEvent e) {
+		if (Main.Plugin_On) {
+			Player p = e.getPlayer();
+			if (!(p.isOp())) {
+				e.setCancelled(true);
+			}
+		}
+	}
+
+	@EventHandler
+	public void onPlayerArmorStandManipulate(PlayerArmorStandManipulateEvent e) {
+		if (Main.Plugin_On) {
+			Player p = e.getPlayer();
+			if (!(p.isOp())) {
+				e.setCancelled(true);
+			}
+		}
+	}
+}

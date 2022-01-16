@@ -1,0 +1,84 @@
+package main;
+
+import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Score;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.util.Vector;
+
+import java.util.Arrays;
+
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+
+
+public class Skill implements Listener{
+
+	
+	@EventHandler
+	public void PlayerInteract(PlayerInteractEvent e) {
+		if (Main.Plugin_On) {
+			Player p = e.getPlayer();
+			System.out.println(p.getInventory().getItemInMainHand());
+			if (p.getInventory().getItemInMainHand() == null) return;
+			System.out.println("123");
+			if (p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equals("목검") && p.getInventory().getItemInMainHand().getItemMeta().getLore().equals(Arrays.asList("평범한 목검이다.", "", "특수능력", "대쉬(우클릭)", ChatColor.WHITE + "  쿨타임:3초", ChatColor.WHITE + "  스테미나 소모량:5"))) {
+				if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
+					if (p.getCooldown(Material.WOOD_SWORD) == 0) {
+						Block block = p.getLocation().getBlock().getRelative(BlockFace.DOWN);
+						Material item = Material.WOOD_SWORD;
+						if (block.getType() != Material.AIR) {
+							Location loc = p.getLocation().clone();
+							Vector jump = loc.getDirection();
+							p.setVelocity(jump.multiply(1.5));
+							p.setCooldown(item, 60);
+						}
+					}
+					
+				}
+			}
+			if (p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equals("낡은 활") && p.getInventory().getItemInMainHand().getItemMeta().getLore().equals(Arrays.asList("낡은 활이다.", "", "특수능력", "매직 애로우(좌클릭)", ChatColor.WHITE + "  쿨타임:0.5초", ChatColor.WHITE + "  마나 소모량:10"))) {
+				if (e.getAction() == Action.LEFT_CLICK_AIR || e.getAction() == Action.LEFT_CLICK_BLOCK) {
+					if (p.getCooldown(Material.BOW) == 0) {
+						Scoreboard board = p.getScoreboard(); //마나 스코어보드
+						Objective obj = board.getObjective("mp");
+						Score score = obj.getScore(p.getName());
+						if (score.getScore() >= 10) {
+							Location loc = p.getLocation().clone();
+							Vector vec = loc.getDirection();
+							Arrow pr = p.launchProjectile(Arrow.class, vec);
+							pr.setShooter(p);
+							pr.setVelocity(vec.multiply(4.5));
+							pr.setGravity(false);
+							pr.setPickupStatus(Arrow.PickupStatus.DISALLOWED);
+							
+							p.setCooldown(Material.BOW, 10);
+							score.setScore(score.getScore() - 10);
+							
+							Bukkit.getScheduler().runTaskTimer(Main.instance, new Runnable() {
+								
+								@Override
+								public void run() {
+									pr.remove();
+									
+								}
+							}, 60, 0);
+						}
+						else {
+							p.sendMessage("마나가 부족합니다.");
+						}
+					}
+				}
+			}
+		}
+	}	
+}

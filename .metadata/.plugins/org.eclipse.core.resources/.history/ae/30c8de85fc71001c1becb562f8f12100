@@ -1,0 +1,111 @@
+package main;
+
+import java.util.Arrays;
+
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.ScoreboardManager;
+
+//import net.md_5.bungee.api.ChatMessageType;
+
+public class Main extends JavaPlugin{
+	static boolean Plugin_On = false;
+	public static Main instance;
+	
+	@Override
+	public void onEnable(){
+		
+		instance = this;
+		
+		Bukkit.getPluginManager().registerEvents(new Event(), this);
+		Bukkit.getPluginManager().registerEvents(new Manager(), this);
+		
+		ScoreboardManager manager = Bukkit.getScoreboardManager();
+		Scoreboard board = manager.getMainScoreboard();
+		
+		if (board.getObjective("mp") == null) { //마나/스테미나 스코어보드 없을때 만들기
+			board.registerNewObjective("mp", "dummy");
+		}
+		if (board.getObjective("max_mp") == null) {
+			board.registerNewObjective("max_mp", "dummy");
+		}
+		if (board.getObjective("stamina") == null) {
+			board.registerNewObjective("stamina", "dummy");
+		}
+		if (board.getObjective("max_stamina") == null) {
+			board.registerNewObjective("max_stamina", "dummy");
+		}
+		
+		
+		if (board.getTeam("swordman") == null) { //클래스 팀 없다면 만들기
+			board.registerNewTeam("swordman");
+		}
+		if (board.getTeam("Archer") == null) {
+			board.registerNewTeam("Archer");
+		}
+		
+		getCommand("rpg").setExecutor(new rpgCommand());
+		Bukkit.getConsoleSender().sendMessage(ChatColor.BLUE + "RPG Plug-in loaded ( Developed by. sG.wolf )");
+	}
+	
+	@Override
+	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+		
+		
+		if (command.getName().equalsIgnoreCase("class")) {
+			if (Plugin_On) {
+				ItemStack item = new ItemStack(Material.DIAMOND_SWORD);
+				ItemMeta meta = item.getItemMeta(); 
+				
+				meta.setDisplayName(ChatColor.BLUE + "검사");
+				meta.setLore(Arrays.asList("검사를 선택합니다", "", "기본템", "목검", "빵(16개)"));
+				item.setItemMeta(meta);
+				
+				Inventory ClassSelector = Bukkit.createInventory(null, 9, "클래스를 선택하여주세요.");
+				ClassSelector.setItem(2,item);
+				
+				item = new ItemStack(Material.BOW);
+				meta = item.getItemMeta();
+				meta.setDisplayName(ChatColor.BLUE + "궁수");
+				meta.setLore(Arrays.asList("궁수를 선택합니다", "", "기본템", "낡은 활", "화살(32개)", "빵(16개)"));
+				item.setItemMeta(meta);
+				
+				ClassSelector.setItem(4, item);
+				Player p = (Player) sender;
+				
+				p.openInventory(ClassSelector);
+				return false;
+			}
+			sender.sendMessage("플러그인이 꺼져있습니다.");
+			return false;
+			
+		}
+		if (command.getName().equalsIgnoreCase("trash")) {
+			if (Plugin_On) {
+				Inventory Trash = Bukkit.createInventory(null, 9, "쓰레기통");
+				
+				Player p = (Player) sender;
+				
+				p.openInventory(Trash);
+				return false;
+			}
+			sender.sendMessage("플러그인이 꺼져있습니다.");
+			return false;
+		}
+		return true;
+	}
+	
+	@Override
+	public void onDisable(){
+		Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "Plug-in unloaded ( Developed by. sG.wolf )");
+	}
+}

@@ -1,0 +1,88 @@
+package main;
+
+import java.util.Arrays;
+
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Score;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.ScoreboardManager;
+
+public class rpgCommand implements CommandExecutor {
+	
+	@Override
+	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+		
+		if (args.length == 0) {
+			sender.sendMessage(ChatColor.RED + "명령어의 형식이 알맞지 않습니다.");
+		}
+		
+		else if (args[0].equalsIgnoreCase("start")) {
+			if (!(sender.isOp())) {
+				sender.sendMessage("Op전용 커맨드입니다.");
+				return false;
+			}
+			sender.sendMessage(ChatColor.BLUE + "RPG plug-in ON!");
+			Main.Plugin_On = true;
+			
+			ScoreboardManager manager = Bukkit.getScoreboardManager();
+			Scoreboard board = manager.getMainScoreboard();
+			
+			Objective MP_obj = board.getObjective("mp"); //마나
+			Objective MP_max_obj = board.getObjective("max_mp");
+			
+			Objective ST_obj = board.getObjective("stamina"); //스테미나
+			Objective ST_max_obj = board.getObjective("max_stamina");
+			
+			
+			Bukkit.getScheduler().scheduleSyncRepeatingTask(new Main(), new Runnable() {
+				
+				@Override
+				public void run() {
+					for(Player p : Bukkit.getOnlinePlayers()) {
+						if (board.getEntryTeam(p.getName()).getName().equals("Archer")) {
+							Score score = MP_obj.getScore(p.getName());
+							if (score.getScore() != MP_max_obj.getScore(p.getName()).getScore()) {
+								score.setScore(score.getScore() + 1);
+							}
+							//p.sendMessage(ChatMessageType.ACTION_BAR + "MP:" + score.getScore() + ChatColor.BLUE);
+						}
+						if (board.getEntryTeam(p.getName()).getName().equals("swordman")) {
+							Score score = ST_obj.getScore(p.getName());
+							if (score.getScore() != ST_max_obj.getScore(p.getName()).getScore()) {
+								score.setScore(score.getScore() + 1);
+							}
+							//p.sendMessage(ChatMessageType.ACTION_BAR + "Stamina:" + score.getScore() + ChatColor.BLUE);
+						}
+					}
+					
+				}
+			}, 0, 10);
+		}
+		
+		else if (args[0].equalsIgnoreCase("stop")) {
+			if (!(sender.isOp())) {
+				sender.sendMessage("Op전용 커맨드입니다.");
+				return false;
+			}
+			sender.sendMessage(ChatColor.RED + "RPG plug-in OFF.");
+			Main.Plugin_On = false;
+			Bukkit.getScheduler().cancelTasks(this);
+		}
+		
+		else if (args[0].equalsIgnoreCase("info")) {
+			sender.sendMessage(ChatColor.BLUE + "Developer: sG.wolf");
+			sender.sendMessage(ChatColor.RED + "Version: 0.1(Beta)");
+		}
+		return false;
+	}
+}
